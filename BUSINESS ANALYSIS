@@ -1,1 +1,90 @@
 4LIFECAFE
+
+1) Which drink are we selling the most?
+SELECT products.product_name, products.category, 
+COUNT(*) AS Total_Drink_Orders
+FROM orders
+JOIN products ON orders.product_id = products.product_id
+WHERE products.category IN ('Frappe', 'Coffee')
+GROUP BY products.product_name, products.category
+ORDER BY Total_Drink_Orders DESC;
+ANSWER:
+PRODUCT_NAME	CATEGORY	TOTAL_DRINK_ORDERS
+Vanilla Frappe	Frappe	 8
+Mocha Frappe	Frappe	 8
+Iced Coffee	Coffee	5
+Caramel Frappe	Frappe	5
+Hot Coffee	Coffee	5
+
+2) Which product brings in the most total revenue?
+SELECT products.product_name, products.category, products.price, 
+SUM(quantity*price) AS Total_Revenue
+FROM orders
+JOIN products ON orders.product_id = products.product_id
+GROUP BY products.product_name, products.category, products.price
+    ORDER BY Total_Revenue DESC;
+ANSWER:
+PRODUCT_NAME	CATEGORY	PRICE	TOTAL_REVENUE
+Mocha Frappe	Frappe	4.5	67.5
+Vanilla Frappe	Frappe	4.5	58.5
+Caramel Frappe	Frappe	4.5	45
+Cake Pop	Baked Good	2.5	45
+Iced Coffee	Coffee	3	39
+Chocolate Chip Cookie	Baked Good	2	28
+Brownie	Baked Good	2.25	27
+Hot Coffee	Coffee	2.75	22
+
+3) Who are our most loyal customers based on order frequency?
+SELECT 
+  customers.customer_id,
+  customers.name,
+    customers.age,
+    customers.student_status,
+  COUNT(*) AS total_orders
+FROM orders
+JOIN customers ON orders.customer_id = customers.customer_id
+GROUP BY customers.customer_id, customers.name, customers.age, customers.student_status
+ORDER BY total_orders DESC;
+ANSWER:
+CUSTOMER_ID	NAME	AGE	STUDENT_STATUS	TOTAL_ORDERS
+1	Sara Lopez	22	Student	8
+6	Ava Johnson	20	Student	8
+3	Liam Nguyen	19	Student	6
+2	Jordan Kim	25	Non-student	6
+4	Emily Davis	21	Student	5
+5	Noah Patel	28	Non-student	5
+9	Olivia Smith	18	Student	4
+10	Daniel Martinez	24	Student	3
+7	Mia Gonzalez	23	Non-student	3
+8	Ethan Chen	26	Non-student	2
+
+4) What day did we sell the most products?
+SELECT order_date,
+    SUM(quantity) AS Total_Quantity_Sold
+    FROM orders
+GROUP BY order_date
+    ORDER BY Total_Quantity_Sold DESC
+    FETCH FIRST 1 ROW ONLY ;
+ANSWER:
+ORDER_DATE	TOTAL_QUANTITY_SOLD
+23-JUN-25	12
+
+5)Which product is performing the worst, and who is buying it (age + student status)?
+SELECT  
+  products.product_id, 
+  products.product_name, 
+  SUM(orders.quantity) AS total_quantity_sold 
+FROM orders 
+JOIN products ON orders.product_id = products.product_id 
+GROUP BY products.product_id, products.product_name  
+ORDER BY total_quantity_sold ASC;
+ANSWER:
+PRODUCT_ID	PRODUCT_NAME	TOTAL_QUANTITY_SOLD
+4	Hot Coffee	8
+2	Caramel Frappe	10
+6	Brownie	12
+5	Iced Coffee	13
+3	Vanilla Frappe	13
+7	Chocolate Chip Cookie	14
+1	Mocha Frappe	15
+8	Cake Pop	18 
